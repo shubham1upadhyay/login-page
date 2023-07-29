@@ -42,6 +42,7 @@ fetch('https://dummyjson.com/auth/login', {
               console.log(setUserProfile(profileData))
             });
         } else {
+          alert("Invalid Credential, Please Check!");
           dispatch(loginFailure(data.message));
         }
       })
