@@ -61,7 +61,7 @@ const LoginPage = ()=>{
             <div className='card-body'>
                 <form>
                 <label className='form-label mt-3'>
-                    Your Email
+                    Your Username
                 </label>
                 <input className='form-control' type='text' name='email' id='email'
                 />
