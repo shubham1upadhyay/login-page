@@ -1,71 +1,57 @@
 import React from 'react';
 import "../styles/Login.css";
-import { useDispatch } from 'react-redux';
-import { loginSuccess, loginFailure, setUserProfile } from '../store/actions';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState } from 'react';
-import Profile from './Profile';
+import {useContext} from 'react' ;
+import CreateContext from '../context/CreateContext';
+ import { useNavigate } from 'react-router';
 
 const LoginPage = ()=>{
 
-  const [username, setUsername] = useState('');
-  const [password, setPass] = useState('');
-  const [loggedIn, setLoggedIn] = useState(false);
+  let {userId,setUserId} = useContext(CreateContext) ;
 
-  const dispatch = useDispatch(); 
+  let navigate = useNavigate() ;
 
-  const proceed = (e) => {
-    e.preventDefault();
+  let userdata = {} ;
 
-    
-fetch('https://dummyjson.com/auth/login', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    
-    username,
-    password,
-  })
-})
-      .then((res) => res.json())
-      .then((data) => {
-        // console.log(data.email);
-        if(data.status==='success' || data.username===username) {
-          setLoggedIn(true);
-          dispatch(loginSuccess(data.user));
-          console.log(loginSuccess(data.user))
-          fetch(`https://dummyjson.com/users/${data.user.id}`)
-            .then((res) => res.json())
-            .then((profileData) => {
-              dispatch(setUserProfile(profileData));
-              
-              console.log(setUserProfile(profileData))
-            });
-        } else {
-          alert("Invalid Credential, Please Check!");
-          dispatch(loginFailure(data.message));
-        }
-      })
-      .catch((error) => {
-        dispatch(loginFailure(error));
-      });
-  };
+ async function proceed(e){
+  e.preventDefault();
+     let email = document.getElementById('email') ;
+     let password = document.getElementById("password") ;
 
-  function handleLogout(){
-    setLoggedIn(false);
-    setUsername('');
-    setPass('');
-  }
+     if(email.value==="" || password.value ===""){
+         alert("fill all details") ;
+         return ;
+     }
+
+     let evalue = email.value ;
+     let pvalue = password.value ;
+     console.log(evalue+"   "+pvalue) ;
+     try{
+         let resp = await fetch('https://dummyjson.com/auth/login', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({
+             username:evalue,
+             password:pvalue,
+             })
+             })
+             .then(res => {
+                 return res.json()})
+             .catch(error => console.log(error));
+
+             var userId = resp.id ;
+                 console.log(userId) ;
+                  setUserId(userId) ;
+                  navigate("profile") ;
+     }
+     catch(error){
+         console.log(error)
+     }
+ }
 
     return(
         <>
         <div className='dad'>
-        {loggedIn ? (
-         <>
-         <button className='logout btn btn-dark' onClick={handleLogout}>Log Out</button>
-         <Profile />
-         </>
-        ) : (
            <div className='form-container'>
            <div className='card' style={{border:"2px orange solid"}}>
             <div className='header'>
@@ -77,15 +63,13 @@ fetch('https://dummyjson.com/auth/login', {
                 <label className='form-label mt-3'>
                     Your Email
                 </label>
-                <input className='form-control' type='text' name='email' value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                <input className='form-control' type='text' name='email' id='email'
                 />
 
                 <label className='form-label mt-3'>
                     Password
                 </label>
-                <input className='form-control' type='password' name='pass' value={password} 
-                onChange={(e) => setPass(e.target.value)}
+                <input className='form-control' type='password' name='password' id='password' 
                 />
                 <button onClick={proceed} className='btn btn-primary w-100 mt-5'>Continue</button>
                 </form>
@@ -102,7 +86,6 @@ fetch('https://dummyjson.com/auth/login', {
            </div>
 
            </div>
-           )}
         </div>
         
         </>

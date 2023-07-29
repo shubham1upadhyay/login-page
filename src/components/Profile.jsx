@@ -1,40 +1,63 @@
-// src/components/Profile.js
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUserProfile } from '../store/actions';
+/* eslint-disable no-unused-vars */
+import React from 'react'
+import axios from 'axios';
+import { useContext } from 'react';
+import CreateContext from '../context/CreateContext';
+import { useState ,useEffect } from 'react';
+import "../index.css"
+
+
+ let userdata = JSON.parse(localStorage.getItem('userdata'));
+
+
+let userId =JSON.parse(localStorage.getItem('userId'));
+
+console.log(userId) ;
+
 
 const Profile = () => {
-  const user = useSelector((state) => state.user);
-  const userProfile = useSelector((state) => state.userProfile);
-  const dispatch = useDispatch();
+      const [userData,setUserData] = useState() ; 
 
-  useEffect(() => {
-    if(user) {
-      fetch(`https://dummyjson.com/users/${user.id}`)
-        .then((res) => res.json())
-        .then((profileData) => {
-          dispatch(setUserProfile(profileData));
-        })
-        .catch((error) => {
-          console.error('Error fetching profile:', error);
-        });
-    }
-  }, [user, dispatch]);
+    let {userId,setUserId} = useContext(CreateContext) ;
+
+      async function fetchdata(){
+        
+          let responce = await axios.get(`https://dummyjson.com/users/${userId}`).then(resp=>resp).catch(error => console.log(error)) ;
+          console.log(responce.data) ;
+          setUserData(responce.data) ;
+        
+      }
+  
+    useEffect(()=>{
+      fetchdata();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[])
+
+  console.log(userData) ;
 
   return (
-    <div>
-      {userProfile ? (
-        <>
-          <h2>Profile Page</h2>
-          <p>Name: {userProfile.name}</p>
-          <p>Email: {userProfile.email}</p>
-          <p>Address: {userProfile.address}</p>
-        </>
-      ) : (
-        <p className='p-3 loading fw-bolder text-danger fs-3'>Loading...</p>
-      )}
-    </div>
-  );
-};
+    <div className='profile-container'>
+     {
+          userData &&
+          <>
+              <div className='left'>
+                <h4>Id :{userData.id}</h4>
+                <h4>firstName : {userData.firstName}</h4>
+                <h4>lastName :{userData.lastName}</h4>
+                <h4>maidenName :{userData.maidenName}</h4>
+                <h4>age : {userData.age}</h4>
+                <h4>gender : {userData.gender}</h4>
+                <h4>email : {userData.email}</h4>
+                <h4>DOB  :{userData.birthDate}</h4>
+              </div>
 
-export default Profile;
+              <div className='right'>
+                  <img src={userData.image} alt='png'/>
+              </div>
+           </>
+       }
+    </div>
+  )
+}
+
+export default Profile

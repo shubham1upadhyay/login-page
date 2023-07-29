@@ -1,18 +1,21 @@
-import './App.css';
-import React from 'react';
-import LoginPage from './components/LoginPage';
+import React from 'react'
+import "./index.css"
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Profile from './components/Profile';
-import { useSelector } from 'react-redux';
+import LoginPage from './components/LoginPage';
 
-function App() {
-  const user = useSelector((state) => state.user);
-
+console.log("app is working")
+const App = () => {
   return (
-   <div>
-      {!user ? <LoginPage /> : <Profile />}
+    <div>
+      <Router>
+            <Routes>
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/profile" element={<Profile />} />
+            </Routes>
+    </Router>
     </div>
-
-  );
+  )
 }
 
-export default App;
+export default App
