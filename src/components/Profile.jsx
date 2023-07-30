@@ -7,6 +7,7 @@ import CreateContext from "../context/CreateContext";
 import { useState, useEffect } from "react";
 import "../index.css";
 import "../styles/Profile.css";
+import { useNavigate } from 'react-router';
 
 let userdata = JSON.parse(localStorage.getItem("userdata"));
 
@@ -34,6 +35,14 @@ const Profile = () => {
   }, []);
 
   // console.log(userData) ;
+
+  let navigate = useNavigate();
+
+  const logout = (e)=>{
+    e.preventDefault();
+    alert("Logged Out Success !")
+     navigate("/");
+  }
 
   return (
     <div class="container emp-profile">
@@ -74,10 +83,10 @@ const Profile = () => {
                 </div>
               </div>
               <div class="col-md-2">
-                <button className="btn btn-dark" disabled>
+                <button onClick={logout} className="btn btn-dark">
                   Logout
                 </button>
-              </div>
+              </div> 
             </div>
             <div class="row">
               <div class="col-md-4">
